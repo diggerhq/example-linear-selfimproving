@@ -2,7 +2,7 @@
 
 This OpenComputer example contains two agents:
 
-- `linear-ticket-summarizer` reads one Linear issue and turns it into an implementation brief.
+- `linear-ticket-summarizer` lists current Linear issues or turns a specific issue into an implementation brief.
 - `self-improving-coder` consults the summarizer, edits this example's own attached source, and opens a draft pull request to improve the agents.
 
 The loop is deliberately reviewable: the coder can open and watch a draft PR, but it cannot merge or deploy. A human merge triggers the repository's normal OpenComputer deployment.
@@ -67,6 +67,7 @@ npm run doctor
 ## Safety boundaries
 
 - The example only issues read-only Linear queries through the managed OAuth connection.
+- The summarizer can list the 50 most recently updated issues for status questions and read one issue in detail for implementation work.
 - Ticket text and repository content are treated as untrusted evidence.
 - Repository access should be restricted to this repository.
 - Pull requests are always drafts.

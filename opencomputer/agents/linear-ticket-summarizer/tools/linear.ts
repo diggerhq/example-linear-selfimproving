@@ -43,6 +43,91 @@ const issueQuery = `
   }
 `;
 
+const issuesQuery = `
+  query SelfImprovementIssues {
+    issues(first: 50, orderBy: updatedAt) {
+      nodes {
+        id
+        identifier
+        title
+        url
+        priority
+        createdAt
+        updatedAt
+        state { name type }
+        team { key name }
+        assignee { name }
+        project { name }
+        cycle { name number }
+        labels { nodes { name } }
+      }
+    }
+  }
+`;
+
+type LinearQueryResult =
+  | {
+      ok: false;
+      status: number;
+      errors: Array<{ message: string; code: string | null }>;
+    }
+  | {
+      ok: true;
+      status: number;
+      data: Record<string, DataValue>;
+    };
+
+async function queryLinear(
+  query: string,
+  variables?: Record<string, DataValue>,
+  signal?: AbortSignal,
+): Promise<LinearQueryResult> {
+  const response = await callService({
+    service: "linear",
+    method: "POST",
+    path: "/graphql",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ query, ...(variables ? { variables } : {}) }),
+    signal,
+  });
+  const payload = (await response.json()) as {
+    data?: Record<string, DataValue>;
+    errors?: Array<{ message?: string; extensions?: { code?: string } }>;
+  };
+  if (!response.ok || payload.errors?.length) {
+    return {
+      ok: false,
+      status: response.status,
+      errors: (payload.errors ?? []).map((error) => ({
+        message: error.message ?? "Unknown Linear GraphQL error",
+        code: error.extensions?.code ?? null,
+      })),
+    };
+  }
+  return { ok: true, status: response.status, data: payload.data ?? {} };
+}
+
+export const linearListIssues = defineTool({
+  name: "linear_list_issues",
+  description:
+    "List up to 50 recently updated Linear issues with their current state, priority, assignee, project, cycle, and labels. This tool is read-only.",
+  input: {
+    type: "object",
+    properties: {},
+    additionalProperties: false,
+  },
+  async run({ signal }): Promise<DataValue> {
+    const result = await queryLinear(issuesQuery, undefined, signal);
+    if (!result.ok) return result;
+    return {
+      ok: true,
+      status: result.status,
+      limit: 50,
+      issues: (result.data.issues as { nodes?: DataValue[] } | undefined)?.nodes ?? [],
+    };
+  },
+});
+
 export const linearGetIssue = defineTool({
   name: "linear_get_issue",
   description:
@@ -61,33 +146,10 @@ export const linearGetIssue = defineTool({
   },
   async run({ input, signal }): Promise<DataValue> {
     const identifier = parseLinearIssueReference(String(input.issue ?? ""));
-    const response = await callService({
-      service: "linear",
-      method: "POST",
-      path: "/graphql",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ query: issueQuery, variables: { id: identifier } }),
-      signal,
-    });
-    const payload = (await response.json()) as {
-      data?: { issue?: DataValue | null };
-      errors?: Array<{ message?: string; extensions?: { code?: string } }>;
-    };
-
-    if (!response.ok || payload.errors?.length) {
-      return {
-        ok: false,
-        status: response.status,
-        identifier,
-        errors: (payload.errors ?? []).map((error) => ({
-          message: error.message ?? "Unknown Linear GraphQL error",
-          code: error.extensions?.code ?? null,
-        })),
-      };
-    }
-    if (!payload.data?.issue) {
-      return { ok: false, status: response.status, identifier, error: "Issue not found" };
-    }
-    return { ok: true, status: response.status, issue: payload.data.issue };
+    const result = await queryLinear(issueQuery, { id: identifier }, signal);
+    if (!result.ok) return { ...result, identifier };
+    const issue = result.data.issue;
+    if (!issue) return { ok: false, status: result.status, identifier, error: "Issue not found" };
+    return { ok: true, status: result.status, issue };
   },
 });
