@@ -3,7 +3,7 @@
 This OpenComputer example contains two agents:
 
 - `linear-ticket-summarizer` reads one Linear issue and turns it into an implementation brief.
-- `self-improving-coder` delegates to the summarizer, edits this example's own attached source, and opens a draft pull request to improve the agents.
+- `self-improving-coder` consults the summarizer, edits this example's own attached source, and opens a draft pull request to improve the agents.
 
 The loop is deliberately reviewable: the coder can open and watch a draft PR, but it cannot merge or deploy. A human merge triggers the repository's normal OpenComputer deployment.
 
@@ -26,11 +26,10 @@ Store the Linear key for the summarizer. It is injected only into requests to `h
 
 ```bash
 npx opencomputer secrets set LINEAR_API_KEY \
-  --environment development \
   --agent linear-ticket-summarizer
 ```
 
-Start the development deployment watcher:
+Start the deployment watcher:
 
 ```bash
 npm run dev
@@ -48,7 +47,7 @@ Improve yourself from ENG-123. Ask the Linear summarizer for a brief, make the s
 
 Expected result:
 
-1. the coder delegates `ENG-123` to `linear-ticket-summarizer`;
+1. the coder consults `linear-ticket-summarizer` about `ENG-123`;
 2. the summarizer reads the issue through its read-only Linear connection;
 3. the coder edits the attached copy of this repository and runs verification;
 4. OpenComputer publishes an `oc/...` branch and draft PR without exposing a GitHub token to the agent; and

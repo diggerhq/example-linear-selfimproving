@@ -1,0 +1,16 @@
+schema = 1
+
+[template]
+name = "Linear self-improving agents"
+description = "A Linear ticket summarizer and a coding agent that can propose reviewed improvements to its own source."
+documentation = "https://github.com/diggerhq/example-linear-selfimproving#readme"
+default_project_name = "linear-self-improving-agents"
+
+[template.first_run]
+agent = "self-improving-coder"
+prompt = "Explain how to connect Linear and this repository, then describe the safe self-improvement loop."
+
+[template.secrets.LINEAR_API_KEY]
+description = "A Linear personal API key used only by the read-only ticket summarizer."
+documentation = "https://linear.app/developers/graphql"
+required = true

@@ -13,10 +13,10 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@opencomputer/agent": "^0.5.2"
+    "@opencomputer/agent": "^0.9.0"
   },
   "devDependencies": {
-    "@opencomputer/cli": "^0.6.1",
+    "@opencomputer/cli": "^0.7.17",
     "@types/node": "^24.0.0",
     "tsx": "^4.20.0",
     "typescript": "^5.9.0"
