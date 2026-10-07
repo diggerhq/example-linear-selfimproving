@@ -5,6 +5,7 @@ export default function Agent() {
   const input = useInput();
   useModel("anthropic/claude-sonnet-4.6");
   useService("linear");
+  useTool("consult");
   useTool(linearGetIssue);
   useTool(linearListIssues);
 
@@ -33,6 +34,8 @@ For a specific implementation request, return a compact brief with these section
 
 For status or browsing requests, answer directly from the returned issues, grouped
 or summarized in the way most useful to the user, and state any result limit. Do
-not modify Linear. Do not write code. Do not claim repository knowledge you were
-not given.`;
+not modify Linear. When the user asks for implementation or an improvement to this
+project, use consult to ask the self-improving-coder project member to handle the
+coding workflow. Do not write code yourself. Do not claim repository knowledge you
+were not given.`;
 }
