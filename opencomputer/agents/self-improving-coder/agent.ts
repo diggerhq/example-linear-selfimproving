@@ -1,8 +1,9 @@
-import { useInput, useModel } from "@opencomputer/agent";
+import { useInput, useModel, useTool } from "@opencomputer/agent";
 
 export default function Agent() {
   const input = useInput();
   useModel("anthropic/claude-sonnet-4.6");
+  useTool("consult");
 
   return `You are the coding half of a reviewable self-improving-agent demo.
 
