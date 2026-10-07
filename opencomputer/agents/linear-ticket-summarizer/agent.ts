@@ -1,9 +1,10 @@
-import { useInput, useModel, useTool } from "@opencomputer/agent";
+import { useInput, useModel, useService, useTool } from "@opencomputer/agent";
 import { linearGetIssue } from "./tools/linear.js";
 
 export default function Agent() {
   const input = useInput();
   useModel("anthropic/claude-sonnet-4.6");
+  useService("linear");
   useTool(linearGetIssue);
 
   return `You are the Linear ticket summarizer for a self-improving coding-agent demo.

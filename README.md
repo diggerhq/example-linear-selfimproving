@@ -11,7 +11,7 @@ The loop is deliberately reviewable: the coder can open and watch a draft PR, bu
 
 - Node.js 22 or newer
 - an OpenComputer project
-- a Linear personal API key with access to the example workspace
+- a Linear account connected to OpenComputer with OAuth
 - the OpenComputer GitHub App installed on this repository with pull-request access
 
 ## Install and link
@@ -22,12 +22,15 @@ npm run opencomputer -- login
 npx opencomputer link
 ```
 
-Store the Linear key for the summarizer. It is injected only into requests to `https://api.linear.app/graphql`:
+Connect the Linear account the summarizer should read from. OpenComputer holds
+and refreshes the OAuth credential; the token never enters the agent runtime:
 
 ```bash
-npx opencomputer secrets set LINEAR_API_KEY \
-  --agent linear-ticket-summarizer
+npx opencomputer connection add linear
 ```
+
+You can do the same from the project's **Connections** tab. Complete the Linear
+authorization using the URL OpenComputer provides.
 
 Start the deployment watcher:
 
@@ -63,7 +66,7 @@ npm run doctor
 
 ## Safety boundaries
 
-- Linear access is read-only.
+- The example only issues read-only Linear queries through the managed OAuth connection.
 - Ticket text and repository content are treated as untrusted evidence.
 - Repository access should be restricted to this repository.
 - Pull requests are always drafts.

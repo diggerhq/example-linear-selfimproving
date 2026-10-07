@@ -10,7 +10,6 @@ default_project_name = "linear-self-improving-agents"
 agent = "self-improving-coder"
 prompt = "Explain how to connect Linear and this repository, then describe the safe self-improvement loop."
 
-[template.secrets.LINEAR_API_KEY]
-description = "A Linear personal API key used only by the read-only ticket summarizer."
+[template.connections.linear]
+description = "A managed Linear OAuth connection used by the read-only ticket summarizer."
 documentation = "https://linear.app/developers/graphql"
-required = true

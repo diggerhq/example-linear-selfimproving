@@ -1,20 +1,8 @@
 import {
-  defineConnection,
+  callService,
   defineTool,
-  secretHeader,
-  useSecret,
 } from "@opencomputer/agent";
 import type { DataValue } from "@opencomputer/agent";
-
-export const linear = defineConnection({
-  id: "linear-api",
-  origin: "https://api.linear.app",
-  methods: ["POST"],
-  pathPrefix: "/graphql",
-  headers: {
-    authorization: secretHeader(useSecret("LINEAR_API_KEY")),
-  },
-});
 
 export function parseLinearIssueReference(value: string): string {
   const reference = value.trim();
@@ -73,8 +61,10 @@ export const linearGetIssue = defineTool({
   },
   async run({ input, signal }): Promise<DataValue> {
     const identifier = parseLinearIssueReference(String(input.issue ?? ""));
-    const response = await linear.fetch("/graphql", {
+    const response = await callService({
+      service: "linear",
       method: "POST",
+      path: "/graphql",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ query: issueQuery, variables: { id: identifier } }),
       signal,
