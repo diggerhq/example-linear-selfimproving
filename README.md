@@ -38,7 +38,12 @@ Start the deployment watcher:
 npm run dev
 ```
 
-In **Agent → Settings → Repository access**, allow only this repository. When starting a coder session, attach this repository's default branch as a working source. Deployment source and working source are separate: GitHub deploys the agent definition from the former, while the session edits and publishes a PR from the latter.
+In **Agent → Settings → Repository access**, allow only this repository.
+Deployment source and working source are separate: GitHub deploys the agent
+definition from the former. When work starts, the coder resolves the allowed
+repository with `list_working_repos`, materializes it with `add_source`, then edits
+and publishes a PR from that working source. This also works for sessions created
+from Slack, where there is no setup form for attaching a source manually.
 
 ## Try the loop
 
@@ -52,7 +57,7 @@ Expected result:
 
 1. the coder consults `linear-ticket-summarizer` about `ENG-123`;
 2. the summarizer reads the issue through its read-only Linear connection;
-3. the coder edits the attached copy of this repository and runs verification;
+3. the coder materializes and edits an allowed copy of this repository and runs verification;
 4. OpenComputer publishes an `oc/...` branch and draft PR without exposing a GitHub token to the agent; and
 5. the session watches the PR checks and reports its URL.
 
