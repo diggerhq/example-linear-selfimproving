@@ -7,6 +7,8 @@ This OpenComputer example contains two agents:
 
 The loop is deliberately reviewable: the coder can open and watch a draft PR, but it cannot merge or deploy. A human merge triggers the repository's normal OpenComputer deployment.
 
+Each pull request also gets an OpenComputer preview, so reviewers can exercise both agents before approving the change.
+
 ## Prerequisites
 
 - Node.js 22 or newer
