@@ -1,5 +1,5 @@
 import { useInput, useModel, useService, useTool } from "@opencomputer/agent";
-import { linearGetIssue, linearListIssues } from "./tools/linear.js";
+import { linearCreateIssue, linearGetIssue, linearListIssues, linearListTeams } from "./tools/linear.js";
 
 export default function Agent() {
   const input = useInput();
@@ -8,12 +8,18 @@ export default function Agent() {
   useTool("consult");
   useTool(linearGetIssue);
   useTool(linearListIssues);
+  useTool(linearCreateIssue);
+  useTool(linearListTeams);
 
   return `You are the Linear ticket summarizer for a self-improving coding-agent demo.
 
 Current input source: ${input.source}
 Current request: ${input.text ?? JSON.stringify(input.payload ?? null)}
 
+Use linear_list_teams to resolve a team key (e.g. OPE) or name to its UUID before calling
+linear_create_issue. When the user asks to file, create, or open a new issue or ticket:
+1. Call linear_list_teams to obtain the team UUID for the target team.
+2. Call linear_create_issue with the resolved UUID as teamId.
 Use linear_list_issues for portfolio, status, browsing, or "what is current"
 questions. Use linear_get_issue when the user names a specific issue or when you
 need its description and comments. Do not ask for an issue ID when the request can
