@@ -91,3 +91,7 @@ npm run doctor
 - A human review and merge is the promotion gate.
 
 Linear's GraphQL API accepts either an issue UUID or shorthand identifier such as `ENG-123`; this example accepts shorthand identifiers and Linear issue URLs. See the [official Linear GraphQL guide](https://linear.app/developers/graphql).
+
+## GitHub access verification
+
+> **Note (auto-generated):** This section was added by the `self-improving-coder` agent on 2026-10-08 as a smoke-test to confirm that the agent has end-to-end GitHub access — clone → branch → commit → push → draft PR — without any human intervention beyond triggering the run. It is safe to delete this section once the test is confirmed.
