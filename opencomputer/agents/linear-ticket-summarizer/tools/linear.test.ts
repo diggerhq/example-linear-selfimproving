@@ -50,3 +50,28 @@ test("linearCreateIssue input schema exposes optional description and stateId", 
   assert.ok("stateId" in schema.properties, "stateId property should exist");
   assert.ok("labelIds" in schema.properties, "labelIds property should exist");
 });
+
+// ---------------------------------------------------------------------------
+// linearListTeams tool definition
+// ---------------------------------------------------------------------------
+import { linearListTeams } from "./linear.js";
+
+test("linearListTeams tool is named linear_list_teams", () => {
+  assert.equal(linearListTeams.name, "linear_list_teams");
+});
+
+test("linearListTeams input schema accepts no properties", () => {
+  const schema = linearListTeams.input as {
+    properties: Record<string, unknown>;
+    additionalProperties: boolean;
+  };
+  assert.deepEqual(Object.keys(schema.properties), []);
+  assert.equal(schema.additionalProperties, false);
+});
+
+test("linearListTeams description mentions id, key, and name", () => {
+  const desc = linearListTeams.description ?? "";
+  assert.ok(desc.includes("id"), "description should mention id");
+  assert.ok(desc.includes("key"), "description should mention key");
+  assert.ok(desc.includes("name"), "description should mention name");
+});

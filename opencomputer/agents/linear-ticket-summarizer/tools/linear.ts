@@ -256,3 +256,37 @@ export const linearCreateIssue = defineTool({
     return { ok: true, status: result.status, issue: issueCreate.issue ?? null };
   },
 });
+
+const listTeamsQuery = `
+  query SelfImprovementListTeams {
+    teams {
+      nodes {
+        id
+        key
+        name
+      }
+    }
+  }
+`;
+
+export const linearListTeams = defineTool({
+  name: "linear_list_teams",
+  description:
+    "List all Linear teams the token has access to, returning each team's UUID (id), " +
+    "short key (e.g. OPE), and display name. Use this to resolve a team key or name " +
+    "to the UUID required by linear_create_issue. This tool is read-only.",
+  input: {
+    type: "object",
+    properties: {},
+    additionalProperties: false,
+  },
+  async run({ signal }): Promise<DataValue> {
+    const result = await queryLinear(listTeamsQuery, undefined, signal);
+    if (!result.ok) return result;
+    return {
+      ok: true,
+      status: result.status,
+      teams: (result.data.teams as { nodes?: DataValue[] } | undefined)?.nodes ?? [],
+    };
+  },
+});
