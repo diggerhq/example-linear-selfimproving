@@ -7,12 +7,16 @@ This OpenComputer example contains two agents:
 
 The loop is deliberately reviewable: the coder can open and watch a draft PR, but it cannot merge or deploy. A human merge triggers the repository's normal OpenComputer deployment.
 
+Each pull request also gets an OpenComputer preview, so reviewers can exercise both agents before approving the change.
+Open the preview from the pull request check and start a new session to test the proposed revision in isolation.
+
 ## Prerequisites
 
 - Node.js 22 or newer
 - an OpenComputer project
 - a Linear account connected to OpenComputer with OAuth
-- the OpenComputer GitHub App installed on this repository with pull-request access
+- the OpenComputer GitHub App installed on this repository with contents and
+  pull-request write access and checks read access
 
 ## Install and link
 
@@ -38,7 +42,15 @@ Start the deployment watcher:
 npm run dev
 ```
 
-In **Agent → Settings → Repository access**, allow only this repository. When starting a coder session, attach this repository's default branch as a working source. Deployment source and working source are separate: GitHub deploys the agent definition from the former, while the session edits and publishes a PR from the latter.
+In **Agent → Settings → Repository access**, allow only this repository.
+Deployment source and working source are separate: GitHub deploys the agent
+definition from the former. When work starts, the coder resolves the allowed
+repository with `list_working_repos`, materializes it with `add_source`, then edits
+and publishes a PR from that working source. The coder declares its GitHub App
+connection in code; the platform makes the short-lived installation credential
+available to ordinary `git` and `gh` commands in its sandbox. This also works for
+sessions created from Slack, where there is no setup form for attaching a source
+manually.
 
 ## Try the loop
 
@@ -52,9 +64,13 @@ Expected result:
 
 1. the coder consults `linear-ticket-summarizer` about `ENG-123`;
 2. the summarizer reads the issue through its read-only Linear connection;
-3. the coder edits the attached copy of this repository and runs verification;
-4. OpenComputer publishes an `oc/...` branch and draft PR without exposing a GitHub token to the agent; and
-5. the session watches the PR checks and reports its URL.
+3. the coder materializes and edits an allowed copy of this repository and runs verification;
+4. the coder pushes an `oc/...` branch and opens a draft PR with `gh pr create`; and
+5. the session verifies the PR with `gh pr view` and reports its URL.
+
+When the summarizer delegates an implementation brief to the coder, the coder uses
+that brief directly instead of consulting the summarizer again. This prevents a
+circular consultation from holding the original conversation until it times out.
 
 ## Verify locally
 
