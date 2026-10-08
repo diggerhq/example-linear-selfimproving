@@ -44,9 +44,9 @@ npm run dev
 
 In **Agent → Settings → Repository access**, allow only this repository.
 Deployment source and working source are separate: GitHub deploys the agent
-definition from the former. When work starts, the coder resolves the allowed
-repository with `list_working_repos`, materializes it with `add_source`, then edits
-and publishes a PR from that working source. The coder declares its GitHub App
+definition from the former. The runtime materializes the allowed working repository
+in the coder's sandbox; the coder verifies its Git origin before editing and
+publishing a PR from that working source. The coder declares its GitHub App
 connection in code; the platform makes the short-lived installation credential
 available to ordinary `git` and `gh` commands in its sandbox. This also works for
 sessions created from Slack, where there is no setup form for attaching a source
